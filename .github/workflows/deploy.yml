@@ -1,8 +1,8 @@
-name: Deploy Task 4 to GitHub Pages
+name: Deploy all projects to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -15,30 +15,81 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: Task4/task-manager/package-lock.json
-      - name: Install and build
-        working-directory: Task4/task-manager
-        run: |
-          npm ci
-          npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: Task4/task-manager/dist
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
+    # Site URL: https://ind1v1d.github.io/React-uni/
+    env:
+      BASE: /React-uni
+
     steps:
-      - id: deployment
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # ---------- React (Vite) projects ----------
+      # `--base` overrides the base set in each vite.config.js so every app
+      # loads its JS/CSS from its own sub-folder of the site.
+
+      - name: Build Task 3 (sis3)
+        working-directory: Task3/sis3
+        run: |
+          npm ci
+          npm run build -- --base=$BASE/task3/
+
+      - name: Build Task 4 (task-manager)
+        working-directory: Task4/task-manager
+        run: |
+          npm ci
+          npm run build -- --base=$BASE/task4/
+
+      - name: Build MovieHub (midterm)
+        working-directory: moviehub/moviehub
+        env:
+          # Optional: add a repo secret OMDB_KEY; otherwise api.js uses its fallback key
+          VITE_OMDB_KEY: ${{ secrets.OMDB_KEY }}
+        run: |
+          npm ci
+          npm run build -- --base=$BASE/moviehub/
+
+      # ---------- Put everything into one site ----------
+      - name: Combine websites
+        run: |
+          mkdir -p _site/bonus1 _site/task1 _site/task2 _site/task3 _site/task4 _site/moviehub
+
+          # Static HTML projects
+          cp -a "Bonus 1/index.html" "Bonus 1/script.js" "Bonus 1/style.css" _site/bonus1/
+          cp Task1/i.html _site/task1/index.html
+          cp Task2/PFP.jpg _site/task2/
+          cp "Task2/SIS Yerdaulet.html" _site/task2/index.html
+
+          # Built React projects
+          cp -a Task3/sis3/dist/. _site/task3/
+          cp -a Task4/task-manager/dist/. _site/task4/
+          cp -a moviehub/moviehub/dist/. _site/moviehub/
+
+          # Landing page with links to every project
+          cp site/index.html _site/index.html
+
+          # Disable Jekyll processing
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
         uses: actions/deploy-pages@v4
