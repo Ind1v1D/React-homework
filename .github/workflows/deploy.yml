@@ -80,6 +80,7 @@ jobs:
           cp -a Task3/sis3/dist/. _site/task3/
           cp -a Task4/task-manager/dist/. _site/task4/
           cp -a moviehub/moviehub/dist/. _site/moviehub/
+          cp -a Task5/Cinerate/dist/. _site/task5/
 
           # Landing page with links to every project
           cp site/index.html _site/index.html
