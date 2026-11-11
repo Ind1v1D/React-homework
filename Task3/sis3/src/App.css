@@ -5,14 +5,8 @@
   font-family: "Inter", "Segoe UI", system-ui, sans-serif; font-size: 15px;
 }
 .shell[data-theme="light"] {
-  --bg: #ffffff; 
-  --panel: #f6f6f6; 
-  --hover: #eeeeee; 
-  --line: #e3e3e3;
-  --ink: #2e3338; 
-  --muted: #7c8087; 
-  --accent: #6c5ad6; 
-  --danger: #c4424f;
+  --bg: #ffffff; --panel: #f6f6f6; --hover: #eeeeee; --line: #e3e3e3;
+  --ink: #2e3338; --muted: #7c8087; --accent: #6c5ad6; --danger: #c4424f;
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
