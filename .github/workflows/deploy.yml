@@ -51,7 +51,7 @@ jobs:
           npm ci
           npm run build -- --base=$BASE/task4/
       - name: Build Task 5 (Cinerate)
-        working-directory: Task5/cinerate
+        working-directory: Task5/Cinerate
         run: |
           npm ci
           npm run build -- --base=$BASE/task5/
