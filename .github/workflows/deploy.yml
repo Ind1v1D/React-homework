@@ -50,6 +50,11 @@ jobs:
         run: |
           npm ci
           npm run build -- --base=$BASE/task4/
+      - name: Build Task 5 (Cinerate)
+        working-directory: Task5/cinerate
+        run: |
+          npm ci
+          npm run build -- --base=$BASE/task5/
 
       - name: Build MovieHub (midterm)
         working-directory: moviehub/moviehub
