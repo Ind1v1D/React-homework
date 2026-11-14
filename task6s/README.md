@@ -1,70 +1,92 @@
-# Getting Started with Create React App
+# CineRate — Server Data, Caching & Firebase Auth (Task 6)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This extends my React Router homework, **CineRate** (Task 5), with **Firebase Authentication**,
+**environment variables**, and **server-data caching with TanStack Query**.
+Everything from Task 5 still works: Home, Movies (search, genre/year/rating filters, sorting and
+pagination in the URL), movie details, reviews, Dashboard, About, and the 404 page.
 
-## Available Scripts
+**Live demo:** https://ind1v1d.github.io/React-uni/task6/
 
-In the project directory, you can run:
+## What's new
+- **Sign up** with email, password, and password confirmation, plus validation
+- **Log in** with email and password, or with **Google** (popup)
+- **Persistent sessions:** you stay signed in after a refresh (`browserLocalPersistence`)
+- **`/profile`** is protected and shows your email and UID, with a Log out button.
+  Signed-out visitors are sent to `/login`, then back to the page they asked for after logging in
+- **NavBar** shows *Log in / Sign up* or *Log out / profile avatar*, depending on whether you're signed in
+- Loading, error (with **Try again**), and empty states for movies, the dashboard, reviews, and the auth forms
+- Reviews posted while signed in can be deleted only by their author
 
-### `npm start`
+## Routes
+`/` Home · `/movies` · `/movies/:id` · `/dashboard` · `/about` · `/login` · `/signup` · `/profile` (protected) · `*` 404
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The app uses `HashRouter`, so on GitHub Pages URLs look like `/#/login`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Caching strategy
+Server data is cached with **TanStack Query**. All query keys are defined in `src/lib/queryClient.js`.
 
-### `npm test`
+| Data | Query key | Stays fresh for | Then |
+| --- | --- | --- | --- |
+| Movie list (search + filters + page) | `['movies', 'list', { search, genre, year, rating, sort, page }]` | 5 min | Refetched the next time it's used |
+| Trending (Home) | `['movies', 'trending']` | 10 min | Refetched the next time it's used |
+| Movie details | `['movies', 'detail', id]` | 30 min | Refetched the next time it's used |
+| Dashboard movies | `['movies', 'dashboard']` | 10 min | Refetched the next time it's used |
+| Genres | `['genres']` | 24 h | Refetched the next time it's used |
+| Reviews of a movie | `['reviews', 'movie', id]` | 30 s | Also refetched when you return to the tab |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Entries nothing is using are removed after 30 minutes (`gcTime`).
+- Going back to a page or filter you've already seen shows the cached data instantly, with no new request.
+- While the next page loads, the previous page stays visible but dimmed (`keepPreviousData`), so the list never flashes empty.
 
-### `npm run build`
+**When is cached data invalidated?**
+After you **post** or **delete** a review, the mutation calls
+`invalidateQueries({ queryKey: ['reviews', 'movie', id] })`. The review list and the average
+rating then refetch right away. TMDB movie data is read-only, so it only expires by time.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Outdated requests:** every combination of filters has its own query key. A slow response
+for filters you've already changed only fills its own cache entry, so it can't overwrite the
+results you're looking at. TanStack Query also passes an `AbortSignal` to every request,
+which cancels requests that are no longer needed.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Architecture
+```
+src/
+  firebase.js               Firebase init from VITE_ environment variables
+  lib/queryClient.js        QueryClient defaults + every query key
+  services/
+    service.js              TMDB API requests
+    authService.js          Firebase sign up / log in / Google / log out + error messages
+    reviewsService.js       Reviews API (async; stored in localStorage)
+  context/AuthContext.jsx   AuthProvider + useAuth (onAuthStateChanged)
+  hooks/
+    useMovies.js            Cached movie queries
+    useGenres.js            Cached genre list
+    useReviews.js           Cached reviews + add/delete mutations with invalidation
+    useAuthAction.js        Loading + error state for auth forms
+  components/               NavBar, ProtectedRoute, AuthCard, Reviews, MovieCard, ...
+  pages/                    Home, Movies, MovieDetails, Dashboard, About, Login, Signup, Profile, NotFound
+```
+Components never call `fetch`, Firebase, or `localStorage` directly. They only use hooks and context.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Setup
+1. Create a Firebase project. Under **Authentication → Sign-in method**, enable **Email/Password** and **Google**.
+2. Under **Project settings → Your apps**, add a **Web app** and copy its config.
+3. Create `.env.local` from the example and fill in the Firebase values and your TMDB key:
+   ```bash
+   cp .env.example .env.local
+   ```
+4. Install and run:
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-### `npm run eject`
+`.env.local` is listed in `.gitignore` and never gets committed.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Deploy (GitHub Pages)
+The repo workflow `.github/workflows/deploy.yml` builds this app into `/task6/`.
+1. Under **Settings → Secrets and variables → Actions**, add `VITE_TMDB_KEY` and every `VITE_FIREBASE_*` value from `.env.example` as repository secrets.
+2. In Firebase, under **Authentication → Settings → Authorized domains**, add `ind1v1d.github.io`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Author
+Mahambet Erdaulet, 4th-year student at KBTU.

@@ -56,6 +56,21 @@ jobs:
           npm ci
           npm run build -- --base=$BASE/task5/
 
+      - name: Build Task 6 (CineRate + Firebase auth)
+        working-directory: task6s
+        env:
+          # Add these as repository secrets (Settings → Secrets and variables → Actions)
+          VITE_TMDB_KEY: ${{ secrets.VITE_TMDB_KEY }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+        run: |
+          npm ci
+          npm run build -- --base=$BASE/task6/
+
       - name: Build MovieHub (midterm)
         working-directory: moviehub/moviehub
         env:
@@ -68,7 +83,7 @@ jobs:
       # ---------- Put everything into one site ----------
       - name: Combine websites
         run: |
-          mkdir -p _site/bonus1 _site/task1 _site/task2 _site/task3 _site/task4 _site/moviehub
+          mkdir -p _site/bonus1 _site/task1 _site/task2 _site/task3 _site/task4 _site/task5 _site/task6 _site/moviehub
 
           # Static HTML projects
           cp -a "Bonus 1/index.html" "Bonus 1/script.js" "Bonus 1/style.css" _site/bonus1/
@@ -81,6 +96,7 @@ jobs:
           cp -a Task4/task-manager/dist/. _site/task4/
           cp -a moviehub/moviehub/dist/. _site/moviehub/
           cp -a Task5/Cinerate/dist/. _site/task5/
+          cp -a task6s/dist/. _site/task6/
 
           # Landing page with links to every project
           cp site/index.html _site/index.html
