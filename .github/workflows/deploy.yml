@@ -22,9 +22,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    # Site URL: https://ind1v1d.github.io/React-uni/
+    # Site URL: https://ind1v1d.github.io/React-homework/
     env:
-      BASE: /React-uni
+      BASE: /React-homework
 
     steps:
       - name: Checkout

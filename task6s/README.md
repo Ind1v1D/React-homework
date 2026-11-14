@@ -5,7 +5,7 @@ This extends my React Router homework, **CineRate** (Task 5), with **Firebase Au
 Everything from Task 5 still works: Home, Movies (search, genre/year/rating filters, sorting and
 pagination in the URL), movie details, reviews, Dashboard, About, and the 404 page.
 
-**Live demo:** https://ind1v1d.github.io/React-uni/task6/
+**Live demo:** https://ind1v1d.github.io/React-homework/task6/
 
 ## What's new
 - **Sign up** with email, password, and password confirmation, plus validation
