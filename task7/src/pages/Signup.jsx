@@ -40,8 +40,8 @@ function Signup() {
 
   return (
     <AuthCard
-      title="Create account"
-      subtitle="Join CineRate to keep your reviews in one place."
+      title="Create your CineRate account"
+      subtitle="Use an email and password, or continue with Google."
       footer={<>Already have an account? <Link to="/login" state={location.state} className="text-link">Log in</Link></>}
     >
       <GoogleButton onClick={() => run(loginWithGoogle)} disabled={pending} />
@@ -55,7 +55,7 @@ function Signup() {
         <Field label="Confirm password" type="password" placeholder="Repeat your password" autoComplete="new-password"
           value={values.confirm} onChange={update("confirm")} error={errors.confirm} />
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="btn btn-block" type="submit" disabled={pending}>
+        <button className={pending ? "btn btn-block is-pending" : "btn btn-block"} type="submit" disabled={pending}>
           {pending ? "Creating account..." : "Sign up"}
         </button>
       </form>

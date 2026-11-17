@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StarRating from "./StarRating";
-import Loader from "./Loader";
+import Icon from "./Icon";
+import { ReviewsSkeleton } from "./Skeletons";
 import ErrorMessage from "./ErrorMessage";
 import useReviews from "../hooks/useReviews";
 import { useAuth } from "../context/AuthContext";
@@ -45,17 +46,21 @@ function Reviews({ movieId }) {
   return (
     <section className="reviews">
       <div className="reviews-head">
-        <h2>Community reviews</h2>
+        <h2>Reviews</h2>
         {reviews.length > 0 && (
-          <p className="muted">
-            ★ {average.toFixed(1)} / 5 · {reviews.length} review{reviews.length > 1 ? "s" : ""}
+          <p className="reviews-summary num">
+            <Icon name="star" fill className="rating-star" />
+            <span className="rating">{average.toFixed(1)}</span>
+            <span className="muted">· {reviews.length} review{reviews.length > 1 ? "s" : ""}</span>
           </p>
         )}
       </div>
 
       <form className="review-form" onSubmit={handleSubmit}>
-        <h3>Leave your review</h3>
+        <h3>Write a review</h3>
+        <label className="sr-only" htmlFor="review-name">Your name</label>
         <input
+          id="review-name"
           type="text"
           placeholder={user ? `Your name (${defaultName})` : "Your name (optional)"}
           value={name}
@@ -63,19 +68,21 @@ function Reviews({ movieId }) {
           maxLength={30}
         />
         <StarRating value={rating} onChange={setRating} />
+        <label className="sr-only" htmlFor="review-text">Your review</label>
         <textarea
+          id="review-text"
           placeholder="What did you think about this movie?"
           rows="3"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        {formError && <p className="form-error">{formError}</p>}
-        <button className="btn" type="submit" disabled={addReview.isPending}>
+        {formError && <p className="form-error" role="alert">{formError}</p>}
+        <button className={addReview.isPending ? "btn is-pending" : "btn"} type="submit" disabled={addReview.isPending}>
           {addReview.isPending ? "Posting..." : "Post review"}
         </button>
       </form>
 
-      {query.isPending && <Loader text="Loading reviews..." />}
+      {query.isPending && <ReviewsSkeleton />}
       {query.isError && <ErrorMessage message={query.error.message} onRetry={() => query.refetch()} />}
       {removeReview.isError && <p className="form-error">{removeReview.error.message}</p>}
 
@@ -90,7 +97,7 @@ function Reviews({ movieId }) {
                 <div className="review-top">
                   <strong>{r.name}</strong>
                   <StarRating value={r.rating} />
-                  <span className="muted">{new Date(r.date).toLocaleDateString()}</span>
+                  <span className="muted num">{new Date(r.date).toLocaleDateString()}</span>
                   {canDelete(r) && (
                     <button className="link-btn" onClick={() => removeReview.mutate(r.id)} disabled={deleting}>
                       {deleting ? "Deleting..." : "Delete"}

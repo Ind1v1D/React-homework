@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Loader from "../components/Loader";
+import Icon from "../components/Icon";
+import { DashboardSkeleton } from "../components/Skeletons";
 import ErrorMessage from "../components/ErrorMessage";
 import useGenres from "../hooks/useGenres";
 import { useDashboardMovies } from "../hooks/useMovies";
@@ -16,7 +17,7 @@ function Breakdown({ title, items }) {
           <div className="bar-track">
             <div className="bar-fill" style={{ width: `${(item.count / max) * 100}%` }}></div>
           </div>
-          <span className="bar-count">{item.count}</span>
+          <span className="bar-count num">{item.count}</span>
         </div>
       ))}
     </div>
@@ -30,7 +31,7 @@ function Dashboard() {
   const [genreId, setGenreId] = useState("");
   const [minRating, setMinRating] = useState(0);
 
-  if (isPending) return <Loader text="Calculating statistics..." />;
+  if (isPending) return <DashboardSkeleton />;
   if (isError) return <ErrorMessage message={error.message} onRetry={() => refetch()} />;
 
   const filtered = movies.filter((m) => {
@@ -81,17 +82,17 @@ function Dashboard() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p className="muted">Statistics based on the {movies.length} most popular movies right now.</p>
+      <h1>How the {movies.length} most popular movies are rated</h1>
+      <p className="muted">Pick a genre or minimum rating to recalculate every figure below.</p>
 
       <div className="filters">
-        <select value={genreId} onChange={(e) => setGenreId(e.target.value)}>
+        <select aria-label="Genre" value={genreId} onChange={(e) => setGenreId(e.target.value)}>
           <option value="">All genres</option>
           {genres.map((g) => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
         </select>
-        <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))}>
+        <select aria-label="Minimum rating" value={minRating} onChange={(e) => setMinRating(Number(e.target.value))}>
           <option value={0}>Any rating</option>
           <option value={6}>Rating 6+</option>
           <option value={7}>Rating 7+</option>
@@ -102,14 +103,14 @@ function Dashboard() {
       {total === 0 ? (
         <div className="center-box">
           <h3>No movies match these filters</h3>
-          <button className="btn" onClick={() => { setGenreId(""); setMinRating(0); }}>Reset filters</button>
+          <button className="btn btn-outline" onClick={() => { setGenreId(""); setMinRating(0); }}>Reset filters</button>
         </div>
       ) : (
         <>
           <div className="stats">
-            <div className="stat"><span>Movies</span><strong>{total}</strong></div>
-            <div className="stat"><span>Average rating</span><strong>★ {avgRating.toFixed(2)}</strong></div>
-            <div className="stat"><span>Total votes</span><strong>{totalVotes.toLocaleString()}</strong></div>
+            <div className="stat"><span>Movies</span><strong className="num">{total}</strong></div>
+            <div className="stat"><span>Average rating</span><strong className="num"><Icon name="star" fill className="rating-star" />{avgRating.toFixed(2)}</strong></div>
+            <div className="stat"><span>Total votes</span><strong className="num">{totalVotes.toLocaleString()}</strong></div>
             <div className="stat">
               <span>Top movie</span>
               <strong><Link to={`/movies/${topMovie.id}`} className="text-link">{topMovie.title}</Link></strong>
@@ -128,11 +129,14 @@ function Dashboard() {
               {top5.map((m) => (
                 <li key={m.id}>
                   <Link to={`/movies/${m.id}`} className="text-link">{m.title}</Link>
-                  <span>★ {m.vote_average.toFixed(1)}</span>
+                  <span className="rating num"><Icon name="star" fill className="rating-star" />{m.vote_average.toFixed(1)}</span>
                 </li>
               ))}
             </ol>
-            <Link to="/movies" className="btn btn-outline">See all movies</Link>
+            <Link to="/movies" className="btn btn-outline">
+              Browse all movies
+              <Icon name="arrow-right" />
+            </Link>
           </div>
         </>
       )}

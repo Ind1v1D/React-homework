@@ -4,9 +4,9 @@ function NotFound() {
   return (
     <div className="center-box">
       <h1 className="big-404">404</h1>
-      <h2>Scene not found</h2>
-      <p className="muted">The page you are looking for does not exist.</p>
-      <Link to="/" className="btn">Go to Home</Link>
+      <h2>This page does not exist</h2>
+      <p className="muted">The address may be mistyped, or the page was moved.</p>
+      <Link to="/" className="btn">Back to home</Link>
     </div>
   );
 }

@@ -37,7 +37,7 @@ function Profile() {
       </dl>
 
       {error && <p className="form-error" role="alert">{error}</p>}
-      <button className="btn btn-outline btn-block" onClick={handleLogout} disabled={pending}>
+      <button className={pending ? "btn btn-outline btn-block is-pending" : "btn btn-outline btn-block"} onClick={handleLogout} disabled={pending}>
         {pending ? "Logging out..." : "Log out"}
       </button>
     </div>

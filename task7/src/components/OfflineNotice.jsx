@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useConnectivity } from "../context/ConnectivityContext";
+import Icon from "./Icon";
 
 // Shared "you're offline" message with a Retry Connection button that really tests the network.
 function OfflineNotice({ onRecovered, showLink = true, title = "You're offline" }) {
@@ -21,13 +22,13 @@ function OfflineNotice({ onRecovered, showLink = true, title = "You're offline" 
 
   return (
     <div className="offline-notice" role="alert">
-      <div className="offline-icon" aria-hidden="true">★</div>
+      <div className="offline-icon" aria-hidden="true"><Icon name="wifi-off" /></div>
       <h2>{title}</h2>
       <p>
         CineRate can't reach the network. Cached pages and movies you've already viewed may still work;
         everything else will load once you're back online.
       </p>
-      <button className="btn btn-primary offline-btn" onClick={retry} disabled={state === "checking"}>
+      <button className={state === "checking" ? "btn offline-btn is-pending" : "btn offline-btn"} onClick={retry} disabled={state === "checking"}>
         {state === "checking" ? "Checking..." : "Retry connection"}
       </button>
       <p className="offline-feedback" role="status" aria-live="polite">

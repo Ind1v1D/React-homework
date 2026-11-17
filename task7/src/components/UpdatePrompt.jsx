@@ -45,7 +45,7 @@ function UpdatePrompt() {
         <div className="pwa-toast" role="alertdialog" aria-label="Update available">
           <span>A new version of CineRate is available</span>
           <div className="pwa-toast-actions">
-            <button className="btn btn-primary" onClick={() => updateServiceWorker(true)}>Update now</button>
+            <button className="btn" onClick={() => updateServiceWorker(true)}>Update now</button>
             <button
               className="btn btn-outline"
               onClick={() => {

@@ -25,8 +25,8 @@ function Login() {
 
   return (
     <AuthCard
-      title="Welcome back"
-      subtitle="Log in to save your reviews and see your profile."
+      title="Log in to CineRate"
+      subtitle="Post reviews under your own name and see your profile."
       footer={<>New to CineRate? <Link to="/signup" state={location.state} className="text-link">Create an account</Link></>}
     >
       <GoogleButton onClick={() => run(loginWithGoogle)} disabled={pending} />
@@ -38,7 +38,7 @@ function Login() {
         <Field label="Password" type="password" placeholder="••••••••" autoComplete="current-password"
           value={password} onChange={(e) => setPassword(e.target.value)} />
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="btn btn-block" type="submit" disabled={pending}>
+        <button className={pending ? "btn btn-block is-pending" : "btn btn-block"} type="submit" disabled={pending}>
           {pending ? "Logging in..." : "Log in"}
         </button>
       </form>

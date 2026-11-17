@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 function About() {
   return (
     <div className="page-narrow">
-      <h1>About CineRate</h1>
+      <h1>What CineRate does, and who made it</h1>
       <p>
         CineRate is a movie rating website made as a React Router homework project. You can search
         movies, filter them, open a movie page, and leave your own star rating and comment.
       </p>
 
-      <h2>Features</h2>
+      <h2>What you can do</h2>
       <ul className="list">
         <li>Movie list with search, filters, sorting and pagination</li>
         <li>Movie details page with cast, runtime, budget and more</li>
@@ -19,10 +19,10 @@ function About() {
         <li>Cached movie data, so pages you already visited open instantly</li>
       </ul>
 
-      <h2>Technologies</h2>
+      <h2>Built with</h2>
       <p>React, React Router, TanStack Query, Firebase Authentication, Vite, TMDB API, CSS.</p>
 
-      <h2>About me</h2>
+      <h2>About the author</h2>
       <p>
         Hi! My name is Mahambet Erdaulet. I am a 4th-year student at KBTU (Kazakh-British Technical
         University) and a beginning React developer. CineRate is my React Router homework project —
@@ -36,7 +36,7 @@ function About() {
       <p className="muted">
         This product uses the TMDB API but is not endorsed or certified by TMDB.
       </p>
-      <Link to="/movies" className="btn">Start exploring</Link>
+      <Link to="/movies" className="btn">Browse movies</Link>
     </div>
   );
 }

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Icon from "./Icon";
+import { useConnectivity } from "../context/ConnectivityContext";
 
 function NavBar() {
   const { user, initializing, logout } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { online } = useConnectivity();
   const [open, setOpen] = useState(false);
   const headerRef = useRef(null);
   const toggleRef = useRef(null);
@@ -49,12 +52,19 @@ function NavBar() {
       <div className="navbar-inner">
         <Link to="/" className="logo">
           <span className="logo-mark">
-            <svg viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
-              <path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2z" />
-            </svg>
+            <Icon name="star" fill />
           </span>
           CineRate
         </Link>
+        <div
+          className={online ? "conn-indicator is-online" : "conn-indicator is-offline"}
+          role="status"
+          aria-live="polite"
+          title={online ? "Online" : "Offline"}
+        >
+          <span className="conn-dot" aria-hidden="true" />
+          <span className="conn-text">{online ? "Online" : "Offline"}</span>
+        </div>
         <button
           type="button"
           ref={toggleRef}
@@ -86,7 +96,7 @@ function NavBar() {
           ) : (
             <>
               <NavLink to="/login" className={linkClass}>Log in</NavLink>
-              <Link to="/signup" className="btn btn-sm">Sign up</Link>
+              <Link to="/signup" className="btn btn-outline btn-sm">Sign up</Link>
             </>
           )}
         </nav>
