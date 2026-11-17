@@ -1,0 +1,90 @@
+/* PWA UI: connection status, banners, toasts, offline page. Mobile-first (320px+). */
+.offline-bar,
+.cached-banner {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  padding-top: max(0.55rem, env(safe-area-inset-top));
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.offline-bar { background: #5a1f27; color: #ffd9dc; }
+.cached-banner { background: rgba(245, 176, 77, 0.16); color: #f5b04d; border-bottom: 1px solid rgba(245, 176, 77, 0.3); }
+
+.conn-pill {
+  position: fixed;
+  left: 0.5rem;
+  bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(16, 24, 48, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #eef1f8;
+  pointer-events: none;
+}
+.conn-dot { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; }
+.is-offline .conn-dot { background: #ff6b6b; }
+
+.pwa-toasts {
+  position: fixed;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.pwa-toast {
+  pointer-events: auto;
+  max-width: 100%;
+  width: max-content;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: #121a36;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #eef1f8;
+  box-shadow: 0 12px 40px rgba(2, 5, 16, 0.6);
+  font-size: 0.9rem;
+}
+.pwa-toast-actions { display: flex; gap: 0.5rem; }
+.pwa-toast .btn { min-height: 44px; min-width: 44px; }
+
+.offline-page { display: flex; justify-content: center; padding: 1rem 0; }
+.offline-notice {
+  width: 100%;
+  max-width: 440px;
+  margin: 1rem auto;
+  padding: 1.75rem 1.1rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(16, 24, 48, 0.7);
+}
+.offline-notice h2 { margin: 0 0 0.5rem; font-size: 1.4rem; }
+.offline-notice p { margin: 0 0 1rem; color: #8b93a8; line-height: 1.5; overflow-wrap: anywhere; }
+.offline-icon {
+  width: 56px; height: 56px; margin: 0 auto 1rem;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px; background: #2f66f0; color: #fff; font-size: 28px;
+}
+.offline-btn { min-height: 48px; min-width: 44px; }
+.offline-notice p.offline-feedback { min-height: 1.4em; margin: 0.75rem 0 0; font-size: 0.9rem; color: #f5b04d; }
+.offline-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: 0 0.75rem; color: #8b93a8; text-decoration: underline;
+}

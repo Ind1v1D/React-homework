@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2f66f0" />
+<title>Offline – CineRate</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:#070b1a;color:#eef1f8;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center}
+  .card{width:100%;max-width:420px;padding:2rem 1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(16,24,48,.8)}
+  .icon{width:64px;height:64px;margin:0 auto 1rem;border-radius:16px;background:#2f66f0;display:flex;align-items:center;justify-content:center;font-size:32px}
+  h1{margin:0 0 .5rem;font-size:1.5rem}
+  p{margin:0 0 1.25rem;color:#8b93a8;line-height:1.5}
+  button{min-height:48px;padding:0 1.5rem;border:0;border-radius:999px;background:#2f66f0;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  button:hover{background:#4b7cf6}
+  button:disabled{opacity:.6;cursor:wait}
+  #status{min-height:1.5em;margin:1rem 0 0;font-size:.9rem;color:#f5b04d}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="icon" aria-hidden="true">&#9733;</div>
+  <h1>You're offline</h1>
+  <p>CineRate can't reach the network right now. Pages and movies you've already viewed may still be available once you reconnect or open them again.</p>
+  <button id="retry" type="button">Retry connection</button>
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+<script>
+  var btn = document.getElementById('retry');
+  var statusEl = document.getElementById('status');
+  function check() {
+    btn.disabled = true;
+    statusEl.textContent = 'Checking connection...';
+    return fetch('./manifest.json?ping=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('bad status');
+        location.href = './';
+      })
+      .catch(function () {
+        statusEl.textContent = 'Still offline. Check your connection and try again.';
+        btn.disabled = false;
+      });
+  }
+  btn.addEventListener('click', check);
+  window.addEventListener('online', check);
+</script>
+</body>
+</html>

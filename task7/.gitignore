@@ -1,0 +1,7 @@
+node_modules
+dist
+
+# Environment variables (secrets) — never commit these
+.env
+.env.local
+.env.*.local
